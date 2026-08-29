@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mine Subsidence AI Surface Monitoring Dashboard</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #0f172a; color: #f8fafc; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        
+        nav { background: #1e293b; padding: 15px 30px; display: flex; gap: 20px; border-bottom: 2px solid #334155; flex-shrink: 0; }
+        nav a { color: #94a3b8; text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: 0.2s; }
+        nav a.active, nav a:hover { color: #38bdf8; }
+
+        header { background: #1e293b; padding: 15px 25px; border-bottom: 2px solid #334155; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+        header h1 { font-size: 1.4rem; color: #38bdf8; letter-spacing: 0.5px; }
+        
+        .status-badge { padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; text-transform: uppercase; }
+        .bg-normal { background: #059669; color: white; }
+        .bg-warning { background: #ea580c; color: white; }
+        .bg-critical { background: #dc2626; color: white; animation: blink 1s infinite alternate; }
+
+        @keyframes blink { from { opacity: 1; } to { opacity: 0.6; } }
+
+        .main-container { display: flex; flex: 1; min-height: 0; overflow: hidden; position: relative; }
+        #map { flex: 2; height: 100%; width: 100%; min-height: 300px; background: #020617; }
+        
+        .sidebar { flex: 1; max-width: 420px; min-width: 300px; background: #1e293b; border-left: 2px solid #334155; padding: 20px; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; }
+        
+        .card { background: #0f172a; padding: 16px; border-radius: 10px; border: 1px solid #334155; }
+        .card h3 { font-size: 1rem; color: #94a3b8; margin-bottom: 12px; font-weight: 600; }
+
+        .scenario-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .btn { padding: 10px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 0.8rem; background: #334155; color: white; }
+        .btn:hover { opacity: 0.85; }
+        .btn-danger { background: #991b1b; color: white; grid-column: span 2; }
+
+        .metric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .metric-box { background: #1e293b; padding: 10px; border-radius: 6px; text-align: center; }
+        .metric-box .val { font-size: 1.2rem; font-weight: bold; color: #38bdf8; margin-top: 4px; }
+        .metric-box .lbl { font-size: 0.75rem; color: #94a3b8; }
+
+        .alert-box { border-left: 4px solid #dc2626; padding: 12px; background: #450a0a; border-radius: 6px; font-size: 0.85rem; line-height: 1.4; margin-top: 8px; }
+        .alert-box strong { color: #fca5a5; font-size: 0.9rem; }
+        .node-chip-container { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0; }
+        .node-chip { background: #7f1d1d; color: #fecaca; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; font-family: monospace; }
+        .connection-error { color: #f87171; font-size: 0.8rem; display: none; margin-right: 10px; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="/">Home</a>
+        <a href="/dashboard/about.html">About Us</a>
+        <a href="/dashboard/dashboard.html" class="active">AI Dashboard</a>
+        <a href="/dashboard/model.html">3D Model</a>
+    </nav>
+
+    <header>
+        <h1>AI Mine Subsidence Early Warning System</h1>
+        <div>
+            <span id="connection-status" class="connection-error">⚠️ Telemetry Stream Disconnected</span>
+            Overall Mine Risk: <span id="overall-risk" class="status-badge bg-normal">0.0%</span>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div id="map"></div>
+
+        <div class="sidebar">
+            <div class="card">
+                <h3>SIMULATION CONTROLLER</h3>
+                <div class="scenario-btns">
+                    <button class="btn" onclick="setScenario('NORMAL')">Normal Operating</button>
+                    <button class="btn" onclick="setScenario('INCREASING_SUBSIDENCE')">Subsurface Failure</button>
+                    <button class="btn" onclick="setScenario('CRACK_EVENT')">Shear Joint Crack</button>
+                    <button class="btn" onclick="setScenario('VIBRATION_EVENT')">Seismic Event</button>
+                    <button class="btn btn-danger" onclick="setScenario('CRITICAL_SUBSIDENCE')">TRIGGER CRITICAL FAILURE</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>SPATIAL RISK ZONES & ALERTS</h3>
+                <div id="alert-container">
+                    <p style="font-size: 0.85rem; color: #64748b;">No active spatial subsidence zones detected.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 id="node-detail-title">SELECTED NODE TELEMETRY</h3>
+                <div class="metric-grid">
+                    <div class="metric-box"><div class="lbl">Displacement</div><div class="val" id="val-disp">-- mm</div></div>
+                    <div class="metric-box"><div class="lbl">Total Tilt Angle</div><div class="val" id="val-tilt">--°</div></div>
+                    <div class="metric-box"><div class="lbl">Vibration</div><div class="val" id="val-vibe">-- g</div></div>
+                    <div class="metric-box"><div class="lbl">Crack State</div><div class="val" id="val-crack">--</div></div>
+                    <div class="metric-box"><div class="lbl">Node Risk Score</div><div class="val" id="val-risk">--</div></div>
+                    <div class="metric-box"><div class="lbl">AI Anomaly Flag</div><div class="val" id="val-anomaly">--</div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        const API_BASE = "/api/v1";
+        let map, markers = {}, selectedNodeId = null;
+
+        function initMap() {
+            map = L.map('map').setView([23.6345, 86.1523], 16);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '© OpenStreetMap'
+            }).addTo(map);
+
+            setTimeout(() => { map.invalidateSize(); }, 300);
+        }
+
+        function getStatusColor(status) {
+            switch(status) {
+                case 'NORMAL': return '#059669';
+                case 'WATCH': return '#d97706';
+                case 'WARNING': return '#ea580c';
+                case 'CRITICAL': return '#dc2626';
+                default: return '#64748b';
+            }
+        }
+
+        async function fetchTelemetry() {
+            try {
+                const res = await fetch(`${API_BASE}/mesh/current-status`);
+                if (!res.ok) throw new Error("Network response error");
+                
+                const data = await res.json();
+                document.getElementById('connection-status').style.display = 'none';
+
+                const overallBadge = document.getElementById('overall-risk');
+                overallBadge.innerText = `${data.overall_mine_risk}%`;
+                overallBadge.className = `status-badge ${
+                    data.overall_mine_risk > 70 ? 'bg-critical' : 
+                    data.overall_mine_risk > 45 ? 'bg-warning' : 'bg-normal'
+                }`;
+
+                if (!selectedNodeId && data.nodes && data.nodes.length > 0) {
+                    selectedNodeId = data.nodes[0].node_id;
+                }
+
+                if (data.nodes) {
+                    data.nodes.forEach(node => {
+                        const color = getStatusColor(node.status);
+                        
+                        if (!markers[node.node_id]) {
+                            const marker = L.circleMarker([node.latitude, node.longitude], {
+                                radius: 10,
+                                fillColor: color,
+                                color: '#ffffff',
+                                weight: 2,
+                                opacity: 1,
+                                fillOpacity: 0.85
+                            }).addTo(map);
+
+                            marker.bindTooltip(`<b>${node.node_id}</b><br>Status: ${node.status}`, { 
+                                permanent: false, direction: 'top', offset: [0, -10]
+                            });
+
+                            marker.on('click', () => {
+                                selectedNodeId = node.node_id;
+                                updateSidebarNode(node);
+                            });
+
+                            markers[node.node_id] = marker;
+                        } else {
+                            markers[node.node_id].setStyle({ fillColor: color });
+                            markers[node.node_id].setTooltipContent(`<b>${node.node_id}</b><br>Status: ${node.status}`);
+                        }
+
+                        if (node.node_id === selectedNodeId) {
+                            updateSidebarNode(node);
+                        }
+                    });
+                }
+
+                renderAlerts(data.active_subsidence_zones);
+
+            } catch (err) {
+                console.error("Error fetching telemetry:", err);
+                document.getElementById('connection-status').style.display = 'inline';
+            }
+        }
+
+        function updateSidebarNode(node) {
+            const totalTilt = node.total_tilt !== undefined 
+                ? node.total_tilt 
+                : Math.sqrt(Math.pow(node.tilt_x || 0, 2) + Math.pow(node.tilt_y || 0, 2)).toFixed(2);
+
+            document.getElementById('node-detail-title').innerText = `TELEMETRY: ${node.node_id}`;
+            document.getElementById('val-disp').innerText = `${node.displacement ? node.displacement.toFixed(2) : '0.00'} mm`;
+            document.getElementById('val-tilt').innerText = `${totalTilt}°`;
+            document.getElementById('val-vibe').innerText = `${node.vibration ? node.vibration.toFixed(3) : '0.000'} g`;
+            document.getElementById('val-crack').innerText = `Level ${node.crack_level !== undefined ? node.crack_level : 0}`;
+            document.getElementById('val-risk').innerText = `${node.risk_score !== undefined ? node.risk_score : 0} / 100`;
+            
+            const anomalyEl = document.getElementById('val-anomaly');
+            anomalyEl.innerText = node.is_anomaly ? "DETECTED" : "NORMAL";
+            anomalyEl.style.color = node.is_anomaly ? "#ef4444" : "#10b981";
+        }
+
+        function renderAlerts(zones) {
+            const container = document.getElementById('alert-container');
+            if (!zones || zones.length === 0) {
+                container.innerHTML = `<p style="font-size: 0.85rem; color: #64748b;">No active spatial subsidence zones detected.</p>`;
+                return;
+            }
+
+            let html = "";
+            zones.forEach(z => {
+                const nodeChips = z.affected_nodes ? z.affected_nodes.map(n => `<span class="node-chip">${n}</span>`).join('') : '';
+                html += `
+                    <div class="alert-box">
+                        <strong>${z.zone_name} (CRITICAL)</strong><br/>
+                        <div style="margin-top: 4px; color: #cbd5e1;">Affected Nodes:</div>
+                        <div class="node-chip-container">${nodeChips}</div>
+                        <div style="margin-top: 4px; color: #f87171; font-weight: 600;">
+                            Correlated Risk: ${z.max_risk_score}%
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        async function setScenario(name) {
+            try {
+                await fetch(`${API_BASE}/simulator/scenario`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ scenario: name })
+                });
+                fetchTelemetry();
+            } catch (err) {
+                console.error("Error setting scenario:", err);
+            }
+        }
+
+        window.onload = () => {
+            initMap();
+            fetchTelemetry();
+            setInterval(fetchTelemetry, 2000);
+        };
+    </script>
+</body>
+</html>

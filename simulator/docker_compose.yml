@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  mine-monitoring-system:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mine_subsidence_app
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      # Persist SQLite DB across container restarts
+      - ./database:/app/database
+      # Mount trained ML models folder
+      - ./models:/app/models
+    environment:
+      - DB_PATH=/app/database/mine_subsidence.db
+      - MODEL_DIR=/app/models/
