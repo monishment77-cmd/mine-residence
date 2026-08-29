@@ -4,22 +4,207 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us - Mine Subsidence AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #0f172a; color: #f8fafc; }
-        
-        nav { background: #1e293b; padding: 15px 30px; display: flex; gap: 20px; border-bottom: 2px solid #334155; }
-        nav a { color: #94a3b8; text-decoration: none; font-weight: 600; font-size: 0.95rem; }
-        nav a.active, nav a:hover { color: #38bdf8; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Hanken Grotesk', 'Segoe UI', sans-serif;
+            background-color: #0a0a0a;
+            background-image:
+                radial-gradient(circle at 15% 20%, rgba(34, 211, 238, 0.08), transparent 40%),
+                radial-gradient(circle at 85% 75%, rgba(245, 158, 11, 0.06), transparent 40%);
+            color: #e1e1f4;
+            min-height: 100vh;
+        }
 
-        .content { max-width: 800px; margin: 50px auto; padding: 20px; line-height: 1.8; }
-        .content h1 { color: #38bdf8; margin-bottom: 20px; }
-        .content h2 { color: #cbd5e1; margin-top: 30px; margin-bottom: 10px; }
+        nav {
+            background: rgba(10, 10, 10, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 18px 40px;
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        nav .brand {
+            font-family: 'Sora', sans-serif;
+            font-weight: 700;
+            color: #22d3ee;
+            letter-spacing: -0.02em;
+            margin-right: 24px;
+        }
+        nav a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding-bottom: 4px;
+            border-bottom: 2px solid transparent;
+            transition: color 0.25s ease, border-color 0.25s ease;
+        }
+        nav a.active, nav a:hover { color: #22d3ee; border-color: #22d3ee; }
+
+        .content { max-width: 900px; margin: 0 auto; padding: 70px 24px 100px; }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(34, 211, 238, 0.08);
+            border: 1px solid rgba(34, 211, 238, 0.25);
+            color: #22d3ee;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 6px 14px;
+            border-radius: 999px;
+            margin-bottom: 24px;
+        }
+
+        .content h1 {
+            font-family: 'Sora', sans-serif;
+            font-size: 2.6rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #22d3ee, #0ea5e9, #67e8f9);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .content > p.lead {
+            font-size: 1.1rem;
+            line-height: 1.75;
+            color: #b8c0d4;
+            max-width: 700px;
+            margin-bottom: 50px;
+        }
+
+        .content h2 {
+            font-family: 'Sora', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 24px;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 56px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 26px;
+            transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            border-color: rgba(34, 211, 238, 0.4);
+            transform: translateY(-4px);
+            box-shadow: 0 0 30px rgba(34, 211, 238, 0.12);
+        }
+        .card .icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: rgba(34, 211, 238, 0.1);
+            border: 1px solid rgba(34, 211, 238, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-bottom: 16px;
+        }
+        .card h3 {
+            font-family: 'Sora', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 8px;
+        }
+        .card p {
+            font-size: 0.92rem;
+            line-height: 1.6;
+            color: #94a3b8;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 24px;
+            padding: 32px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            margin-bottom: 56px;
+        }
+        .stat .value {
+            font-family: 'Sora', sans-serif;
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: #22d3ee;
+            margin-bottom: 4px;
+        }
+        .stat .label {
+            font-size: 0.78rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: #94a3b8;
+        }
+
+        .cta-box {
+            background: rgba(245, 158, 11, 0.06);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 14px;
+            padding: 32px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+        .cta-box p {
+            font-size: 1rem;
+            color: #f1f5f9;
+            max-width: 420px;
+        }
+        .cta-box a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(to right, #f59e0b, #fb923c);
+            color: #0a0a0a;
+            font-weight: 700;
+            text-decoration: none;
+            padding: 12px 26px;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.35);
+            transition: transform 0.25s ease;
+            white-space: nowrap;
+        }
+        .cta-box a:hover { transform: translateY(-2px); }
+
+        @media (max-width: 600px) {
+            nav { padding: 14px 20px; gap: 18px; flex-wrap: wrap; }
+            .content h1 { font-size: 2rem; }
+        }
     </style>
 </head>
 <body>
 
     <nav>
+        <span class="brand">A.I.M.S.</span>
         <a href="/">Home</a>
         <a href="/dashboard/about.html" class="active">About Us</a>
         <a href="/dashboard/dashboard.html">AI Dashboard</a>
@@ -27,15 +212,50 @@
     </nav>
 
     <div class="content">
-        <h1>About the Mine Subsidence AI System</h1>
-        <p>Our surface monitoring platform integrates IoT hardware sensors with machine learning models to detect micro-vibrations, displacement, and angular tilts before critical structural failures occur.</p>
+        <span class="eyebrow">● About the platform</span>
+        <h1>Built for the moment before failure happens</h1>
+        <p class="lead">
+            Our surface monitoring platform combines dense IoT sensor networks with predictive machine learning to detect micro-vibrations, ground displacement, and angular tilt long before they become structural failures — giving engineering teams the lead time to act.
+        </p>
+
+        <div class="stats-row">
+            <div class="stat">
+                <div class="value">99.9%</div>
+                <div class="label">Detection Accuracy</div>
+            </div>
+            <div class="stat">
+                <div class="value">&lt;50ms</div>
+                <div class="label">Telemetry Latency</div>
+            </div>
+            <div class="stat">
+                <div class="value">24,592</div>
+                <div class="label">Active IoT Nodes</div>
+            </div>
+        </div>
 
         <h2>Key Capabilities</h2>
-        <ul>
-            <li><strong>Spatial Risk Engine:</strong> Machine learning classification for high-risk zones.</li>
-            <li><strong>Live Telemetry Stream:</strong> Real-time integration with wireless mesh nodes.</li>
-            <li><strong>3D Digital Twin:</strong> Interactive hardware and terrain visualization.</li>
-        </ul>
+        <div class="card-grid">
+            <div class="card">
+                <div class="icon">▲</div>
+                <h3>Spatial Risk Engine</h3>
+                <p>Machine learning classification continuously scores every zone across the site, flagging high-risk areas as ground conditions evolve.</p>
+            </div>
+            <div class="card">
+                <div class="icon">◉</div>
+                <h3>Live Telemetry Stream</h3>
+                <p>Real-time integration with a wireless mesh sensor network delivers second-by-second readings straight to the dashboard.</p>
+            </div>
+            <div class="card">
+                <div class="icon">◆</div>
+                <h3>3D Digital Twin</h3>
+                <p>An interactive hardware and terrain visualization lets engineers explore subsurface conditions and sensor placement in real time.</p>
+            </div>
+        </div>
+
+        <div class="cta-box">
+            <p>See the system detect and score risk in real time on live site data.</p>
+            <a href="/dashboard/dashboard.html">Open Live AI Dashboard →</a>
+        </div>
     </div>
 
 </body>

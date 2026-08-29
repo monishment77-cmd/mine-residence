@@ -1,39 +1,418 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - Mine Subsidence Monitoring</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #0f172a; color: #f8fafc; }
-        
-        nav { background: #1e293b; padding: 15px 30px; display: flex; gap: 20px; border-bottom: 2px solid #334155; }
-        nav a { color: #94a3b8; text-decoration: none; font-weight: 600; font-size: 0.95rem; }
-        nav a.active, nav a:hover { color: #38bdf8; }
-
-        .hero { padding: 80px 20px; text-align: center; max-width: 900px; margin: 0 auto; }
-        .hero h1 { font-size: 2.8rem; color: #38bdf8; margin-bottom: 20px; }
-        .hero p { font-size: 1.2rem; color: #94a3b8; line-height: 1.6; margin-bottom: 30px; }
-        
-        .btn-cta { display: inline-block; background: #0284c7; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; }
-        .btn-cta:hover { background: #0369a1; }
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Mine Subsidence Early Warning System</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600&amp;family=Sora:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-container": "#e6ecff",
+                        "on-primary": "#3c0091",
+                        "on-tertiary-fixed": "#3d0026",
+                        "inverse-surface": "#e1e1f4",
+                        "tertiary-fixed-dim": "#ffafd3",
+                        "on-tertiary-container": "#560038",
+                        "secondary-container": "#0566d9",
+                        "surface-variant": "#323442",
+                        "primary": "#d0bcff",
+                        "surface-container-lowest": "#0b0d1a",
+                        "on-tertiary-fixed-variant": "#85145a",
+                        "error": "#ffb4ab",
+                        "tertiary-container": "#e364a7",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "tertiary-fixed": "#ffd8e7",
+                        "primary-fixed": "#e9ddff",
+                        "surface-container": "#1d1f2c",
+                        "on-error-container": "#ffdad6",
+                        "surface-container-highest": "#323442",
+                        "surface-dim": "#111220",
+                        "surface": "#111220",
+                        "on-primary-fixed-variant": "#5516be",
+                        "on-surface": "#e1e1f4",
+                        "surface-tint": "#d0bcff",
+                        "on-secondary-fixed": "#001a42",
+                        "on-primary-container": "#340080",
+                        "primary-container": "#a078ff",
+                        "error-container": "#93000a",
+                        "tertiary": "#ffafd3",
+                        "on-primary-fixed": "#23005c",
+                        "secondary": "#adc6ff",
+                        "on-secondary": "#002e6a",
+                        "on-surface-variant": "#cbc3d7",
+                        "on-tertiary": "#620040",
+                        "surface-bright": "#373847",
+                        "secondary-fixed": "#d8e2ff",
+                        "primary-fixed-dim": "#d0bcff",
+                        "on-background": "#e1e1f4",
+                        "inverse-on-surface": "#2e2f3e",
+                        "outline": "#958ea0",
+                        "background": "#111220",
+                        "outline-variant": "#494454",
+                        "inverse-primary": "#6d3bd7",
+                        "surface-container-high": "#272937",
+                        "surface-container-low": "#191b28",
+                        "on-secondary-fixed-variant": "#004395",
+                        "on-error": "#690005"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-lg": "48px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "64px",
+                        "stack-sm": "8px",
+                        "container-max": "1440px",
+                        "unit": "4px",
+                        "stack-md": "24px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Hanken Grotesk"],
+                        "headline-lg": ["Sora"],
+                        "headline-lg-mobile": ["Sora"],
+                        "headline-md": ["Sora"],
+                        "display-xl": ["Sora"],
+                        "body-md": ["Hanken Grotesk"],
+                        "label-sm": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-lg": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "headline-md": ["32px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "display-xl": ["72px", { "lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glow-text {
+            text-shadow: 0 0 20px rgba(208, 188, 255, 0.5);
+        }
+        .btn-glow {
+            box-shadow: 0 0 20px rgba(160, 120, 255, 0.4);
+        }
+        .particle {
+            position: absolute;
+            background-color: rgba(208, 188, 255, 0.6);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float-up linear infinite;
+        }
+        @keyframes float-up {
+            0% { transform: translateY(0) scale(1); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) scale(0.5); opacity: 0; }
+        }
+        .bg-gradient-text {
+            background: linear-gradient(to right, #87CEEB, #d0bcff, #ffafd3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
     </style>
 </head>
-<body>
+<body class="bg-background text-on-background antialiased overflow-x-hidden min-h-screen relative font-body-md">
+<!-- Background Shader Animation -->
+<div class="fixed inset-0 z-0">
+<div class="absolute inset-0 w-full h-full opacity-60" style="display:block;">
+<canvas id="shader-canvas-ANIMATION_13" style="display:block;width:100%;height:100%"></canvas>
+<script>
+(function() {
+  const canvas = document.getElementById('shader-canvas-ANIMATION_13');
 
-    <nav>
-        <a href="/" class="active">Home</a>
-        <a href="/dashboard/about.html">About Us</a>
-        <a href="/dashboard/dashboard.html">AI Dashboard</a>
-        <a href="/dashboard/model.html">3D Model</a>
-    </nav>
+  function syncSize() {
+    const w = canvas.clientWidth  || 1280;
+    const h = canvas.clientHeight || 720;
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width  = w;
+      canvas.height = h;
+    }
+  }
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(syncSize).observe(canvas);
+  }
+  syncSize();
 
-    <div class="hero">
-        <h1>AI Mine Subsidence Early Warning System</h1>
-        <p>Real-time spatial risk prediction, mesh network IoT telemetry monitoring, and subsurface failure detection to protect mining operations and infrastructure.</p>
-        <a href="/dashboard/dashboard.html" class="btn-cta">Open Live AI Dashboard</a>
-    </div>
+  const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+  if (!gl) return;
+  const vs = `attribute vec2 a_position;
+varying vec2 v_texCoord;
+void main() {
+  v_texCoord = a_position * 0.5 + 0.5;
+  gl_Position = vec4(a_position, 0.0, 1.0);
+}`;
+  const fs = `precision highp float;
+varying vec2 v_texCoord;
+uniform float u_time;
+uniform vec2 u_resolution;
 
-</body>
-</html>
+vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
+
+float snoise(vec2 v){
+  const vec4 C = vec4(0.211324865405187, 0.366025403784439,
+           -0.577350269189626, 0.024390243902439);
+  vec2 i  = floor(v + dot(v, C.yy) );
+  vec2 x0 = v -   i + dot(i, C.xx);
+  vec2 i1;
+  i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+  vec4 x12 = x0.xyxy + C.xxzz;
+  x12.xy -= i1;
+  i = mod(i, 289.0);
+  vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 ))
+  + i.x + vec3(0.0, i1.x, 1.0 ));
+  vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy),
+    dot(x12.zw,x12.zw)), 0.0);
+  m = m*m ;
+  m = m*m ;
+  vec3 x = 2.0 * fract(p * C.www) - 1.0;
+  vec3 h = abs(x) - 0.5;
+  vec3 ox = floor(x + 0.5);
+  vec3 a0 = x - ox;
+  m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
+  vec3 g;
+  g.x  = a0.x  * x0.x  + h.x  * x0.y;
+  g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+  return 130.0 * dot(m, g);
+}
+
+void main() {
+    vec2 uv = v_texCoord;
+    float t = u_time * 0.2;
+    
+    vec3 bgColor = vec3(0.067, 0.071, 0.125);
+    
+    float n1 = snoise(uv * 2.0 + vec2(t * 0.1, t * 0.05));
+    float n2 = snoise(uv * 1.5 - vec2(t * 0.08, t * 0.12));
+    
+    vec3 blue = vec3(0.23, 0.51, 0.96);
+    vec3 violet = vec3(0.55, 0.36, 0.96);
+    vec3 pink = vec3(0.96, 0.45, 0.71);
+    
+    float bloom1 = smoothstep(0.4, 0.9, n1);
+    float bloom2 = smoothstep(0.3, 0.8, n2);
+    
+    vec3 finalColor = bgColor;
+    finalColor = mix(finalColor, blue, bloom1 * 0.15);
+    finalColor = mix(finalColor, violet, bloom2 * 0.1);
+    finalColor = mix(finalColor, pink, smoothstep(0.8, 0.0, length(uv - vec2(1.0, 1.0))) * 0.05);
+    
+    vec2 grid = fract(uv * 40.0);
+    float line = smoothstep(0.02, 0.0, grid.x) + smoothstep(0.02, 0.0, grid.y);
+    finalColor += line * blue * 0.03;
+    
+    gl_FragColor = vec4(finalColor, 1.0);
+}`;
+  function cs(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    return s;
+  }
+  const prog = gl.createProgram();
+  gl.attachShader(prog, cs(gl.VERTEX_SHADER, vs));
+  gl.attachShader(prog, cs(gl.FRAGMENT_SHADER, fs));
+  gl.linkProgram(prog);
+  gl.useProgram(prog);
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+  const pos = gl.getAttribLocation(prog, 'a_position');
+  gl.enableVertexAttribArray(pos);
+  gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
+  const uTime = gl.getUniformLocation(prog, 'u_time');
+  const uRes = gl.getUniformLocation(prog, 'u_resolution');
+  const uMouse = gl.getUniformLocation(prog, 'u_mouse');
+
+  let mouse = { x: canvas.width / 2, y: canvas.height / 2 };
+  window.addEventListener('mousemove', (event) => {
+    const rect = canvas.getBoundingClientRect();
+    if (rect.width && rect.height) {
+      const nx = (event.clientX - rect.left) / rect.width;
+      const ny = 1.0 - (event.clientY - rect.top) / rect.height;
+      mouse.x = nx * canvas.width;
+      mouse.y = ny * canvas.height;
+    }
+  });
+
+  function render(t) {
+    if (typeof ResizeObserver === 'undefined') syncSize();
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    if (uTime) gl.uniform1f(uTime, t * 0.001);
+    if (uRes) gl.uniform2f(uRes, canvas.width, canvas.height);
+    if (uMouse) gl.uniform2f(uMouse, mouse.x, mouse.y);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    requestAnimationFrame(render);
+  }
+  render(0);
+})();
+</script>
+</div>
+<div class="absolute inset-0 bg-gradient-to-b from-background/40 via-background/60 to-background z-0 pointer-events-none"></div>
+</div>
+<div class="fixed inset-0 z-0 pointer-events-none overflow-hidden" id="particles-container"></div>
+<!-- Top Navigation Bar -->
+<nav class="fixed top-0 w-full z-50 bg-surface/70 backdrop-blur-xl border-b border-white/10 shadow-none transition-all duration-300 ease-in-out">
+<div class="flex items-center justify-between px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
+<div class="font-headline-md text-headline-md font-bold text-primary tracking-tighter">
+                A.I.M.S.
+            </div>
+<ul class="hidden md:flex items-center space-x-8">
+<li>
+<a class="font-body-md text-body-md text-primary border-b-2 border-primary pb-1 font-semibold" href="/index.html">Home</a>
+</li>
+<li>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface hover:bg-white/5 px-3 py-2 rounded-md transition-colors" href="/dashboard/about.html">About Us</a>
+</li>
+<li>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface hover:bg-white/5 px-3 py-2 rounded-md transition-colors" href="/dashboard/dashboard.html">AI Dashboard</a>
+</li>
+<li>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface hover:bg-white/5 px-3 py-2 rounded-md transition-colors" href="/dashboard/model.html">3D Model</a>
+</li>
+</ul>
+<button class="hidden md:inline-flex items-center justify-center font-body-md text-body-md font-semibold text-background bg-primary hover:bg-primary-fixed transition-colors duration-300 px-6 py-2.5 rounded border border-primary-fixed shadow-sm" onclick="window.location.href='/dashboard/dashboard.html'">
+                Get Started
+            </button>
+<button class="md:hidden text-primary">
+<span class="material-symbols-outlined text-2xl">menu</span>
+</button>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="relative z-10 pt-[100px] min-h-screen flex items-center px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter w-full">
+<div class="lg:col-span-7 flex flex-col justify-center text-left py-stack-lg z-20">
+<div class="inline-flex items-center space-x-2 bg-surface-container-high/80 backdrop-blur-md border border-white/10 rounded-full px-4 py-1.5 w-fit mb-stack-md">
+<span class="relative flex h-3 w-3">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary-fixed opacity-75"></span>
+<span class="relative inline-flex rounded-full h-3 w-3 bg-secondary"></span>
+</span>
+<span class="font-label-sm text-label-sm text-secondary tracking-widest uppercase">System Online</span>
+</div>
+<h1 class="font-headline-lg-mobile md:font-display-xl text-headline-lg-mobile md:text-display-xl mb-stack-md bg-gradient-text glow-text">
+                    AI Mine Subsidence Early Warning System
+                </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mb-stack-lg leading-relaxed">
+                    Mission-critical geotechnical intelligence. Leveraging advanced IoT telemetry and predictive AI to identify spatial risk factors and surface deformation before failure occurs.
+                </p>
+<div class="flex flex-col sm:flex-row items-start gap-4">
+<a href="/dashboard/dashboard.html" class="group relative inline-flex items-center justify-center font-body-md text-body-md font-semibold text-background bg-gradient-to-r from-primary-container to-tertiary-container overflow-hidden rounded px-8 py-4 transition-all duration-300 hover:-translate-y-1 btn-glow border border-white/20">
+<span class="relative z-10 flex items-center gap-2">
+                            Open Live AI Dashboard
+                            <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</span>
+<div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out"></div>
+</a>
+<a href="/dashboard/model.html" class="inline-flex items-center justify-center font-body-md text-body-md font-semibold text-on-surface-variant hover:text-on-surface bg-surface-container/50 hover:bg-surface-container backdrop-blur-md rounded px-8 py-4 transition-all duration-300 border border-white/10">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined">play_circle</span>
+                            View Demo
+                        </span>
+</a>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-3 gap-6 mt-stack-lg pt-stack-md border-t border-white/10 opacity-80">
+<div>
+<div class="font-headline-md text-headline-md text-primary mb-1">99.9%</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Detection Accuracy</div>
+</div>
+<div>
+<div class="font-headline-md text-headline-md text-secondary mb-1">&lt;50ms</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Telemetry Latency</div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-5 hidden lg:flex items-center justify-center relative z-10">
+<div class="relative w-full aspect-square max-w-md">
+<div class="absolute inset-0 bg-primary/20 blur-[100px] rounded-full mix-blend-screen"></div>
+<div class="relative w-full h-full rounded-2xl overflow-hidden border border-white/10 bg-surface-container-high/40 backdrop-blur-xl shadow-[0_0_40px_rgba(160,120,255,0.15)] flex items-center justify-center p-4">
+<div class="bg-cover bg-center w-full h-full rounded-xl opacity-90 mix-blend-luminosity hover:mix-blend-normal transition-all duration-700" data-alt="A highly detailed 3D visualization of geological strata and underground mine tunnels glowing with neon violet and blue sensor data." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBDqXMTQB9jRJ2YEagqPIIV9AtvI7F_BD1nIngchfYLu5-c8XJIZbyXwXNw4R2lCP65LGIBRBjH_UVQHoebJUY_G1whyfHxLXVgIQQuPHzlRGKAKj9ds0YoWaqafVCWewc7Ga6rjDoWbXfKmtMJydksdJdg1HPKU6VqjK1rL3Nmsk7D0eaZhSsGVFafMJ6Lm_h36PXDFUU9M560lQDfGElW8T_GLBUq4ILs_lPZZFlgKuebLzrNYWg')"></div>
+</div>
+<div class="absolute -top-6 -right-6 bg-surface-container/80 backdrop-blur-md border border-white/10 rounded-lg p-4 shadow-lg animate-pulse" style="animation-duration: 4s;">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-error">warning</span>
+<div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">Sector 4 Alpha</div>
+<div class="font-body-md text-body-md font-semibold text-error">+0.04mm shift</div>
+</div>
+</div>
+</div>
+<div class="absolute -bottom-8 -left-8 bg-surface-container/80 backdrop-blur-md border border-white/10 rounded-lg p-4 shadow-lg">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">sensors</span>
+<div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">IoT Nodes Active</div>
+<div class="font-body-md text-body-md font-semibold text-secondary">24,592</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="relative z-10 bg-surface-dim/80 backdrop-blur-md w-full py-12 border-t border-white/5">
+<div class="flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto space-y-6 md:space-y-0">
+<div class="font-headline-md text-headline-md text-primary opacity-80 hover:opacity-100 transition-opacity">
+                A.I.M.S.
+            </div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">
+                © 2026 A.I.M.S. All rights reserved.
+            </div>
+<ul class="flex flex-wrap justify-center gap-6">
+<li><a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors opacity-80 hover:opacity-100" href="#">Privacy Policy</a></li>
+<li><a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors opacity-80 hover:opacity-100" href="#">Terms of Service</a></li>
+<li><a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors opacity-80 hover:opacity-100" href="#">Contact</a></li>
+</ul>
+</div>
+</footer>
+<!-- Script for interactive elements (Particles) -->
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('particles-container');
+            const particleCount = 20;
+
+            for (let i = 0; i < particleCount; i++) {
+                createParticle();
+            }
+
+            function createParticle() {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                const size = Math.random() * 4 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                particle.style.left = `${Math.random() * 100}vw`;
+                particle.style.bottom = `-10px`;
+                
+                const duration = Math.random() * 10 + 10;
+                const delay = Math.random() * 10;
+                
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${delay}s`;
+                
+                container.appendChild(particle);
+                
+                particle.addEventListener('animationend', () => {
+                    particle.remove();
+                    createParticle();
+                });
+            }
+        });
+    </script>
+</body></html>
