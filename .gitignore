@@ -1,5 +1,5 @@
 
-dashboard/model.html
+
 database/*.db
 __pycache__/
 *.pyc

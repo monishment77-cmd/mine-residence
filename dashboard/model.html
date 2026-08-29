@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Imaginary Prototype and 3D Model</title>
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0a0a0a;background-image:radial-gradient(circle at 15% 20%, rgba(34, 211, 238, 0.08), transparent 40%),radial-gradient(circle at 85% 75%, rgba(245, 158, 11, 0.06), transparent 40%);color:#e1e1f4;font-family:'Hanken Grotesk',Arial,Helvetica,sans-serif}
+nav{background:rgba(10,10,10,0.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:15px 30px;display:flex;align-items:center;gap:32px;border-bottom:1px solid rgba(255,255,255,0.08)}
+nav .brand{font-family:'Sora',sans-serif;font-weight:700;color:#22d3ee;letter-spacing:-0.02em;margin-right:24px}
+nav a{color:#94a3b8;text-decoration:none;font-weight:600;font-size:0.95rem;padding-bottom:4px;border-bottom:2px solid transparent;transition:color .25s ease,border-color .25s ease}
+nav a.active,nav a:hover{color:#22d3ee;border-color:#22d3ee}
+header{padding:22px 5%;border-bottom:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.02)}
+h1{margin:0;font-family:'Sora',sans-serif;font-size:clamp(24px,4vw,40px);background:linear-gradient(to right,#22d3ee,#0ea5e9,#67e8f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent} .sub{color:#94a3b8;margin-top:8px}
+main{max-width:1400px;margin:auto;padding:24px}
+.tabs{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+button{background:#1a1a1a;color:#e1e1f4;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px 18px;font-size:15px;cursor:pointer;transition:.2s}
+button:hover{border-color:rgba(34,211,238,0.5);background:#202020}
+button.active{background:rgba(34,211,238,0.1);border-color:#22d3ee;color:#22d3ee}
+.viewer-card{background:rgba(255,255,255,0.03);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.08);border-radius:22px;padding:16px}
+model-viewer{width:100%;height:70vh;min-height:520px;border-radius:16px;background:radial-gradient(circle,#111927 0,#0d0d0d 60%,#050505 100%);}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.controls button{background:#1a1a1a}
+.status{margin-top:14px;color:#94a3b8;font-size:14px}
+@media(max-width:600px){main{padding:12px}model-viewer{height:65vh;min-height:420px}nav{padding:14px 20px;gap:18px;flex-wrap:wrap}}
+</style>
+</head>
+<body>
+<nav>
+<span class="brand">A.I.M.S.</span>
+<a href="/">Home</a>
+<a href="/dashboard/about.html">About Us</a>
+<a href="/dashboard/dashboard.html">AI Dashboard</a>
+<a href="/dashboard/model.html" class="active">3D Model</a>
+</nav>
+<header>
+<h1>Imaginary Prototype and 3D Model</h1>
+<div class="sub">Interactive prototype viewer — select a model, drag to rotate, and scroll to zoom.</div>
+</header>
+<main>
+<div class="tabs" id="tabs"></div>
+<div class="viewer-card">
+<model-viewer id="viewer" camera-controls auto-rotate rotation-per-second="20deg"
+shadow-intensity="1" exposure="1" environment-image="neutral"
+interaction-prompt="auto" loading="eager"></model-viewer>
+<div class="controls">
+<button onclick="setView('0deg 75deg 2.5m')">Front</button>
+<button onclick="setView('90deg 75deg 2.5m')">Side</button>
+<button onclick="setView('180deg 75deg 2.5m')">Back</button>
+<button onclick="setView('270deg 75deg 2.5m')">Other Side</button>
+<button onclick="toggleRotate()">Auto Rotate</button>
+<button onclick="resetView()">Reset View</button>
+</div>
+<div class="status" id="status">Loading Worker Safety Node…</div>
+</div>
+</main>
+<script>
+const MODELS = {
+  "Worker Safety Node": "assets/worker_safety_node.glb",
+  "Repeater Node": "assets/repeater_node.glb",
+  "Receiver Node": "assets/receiver_node.glb"
+};
+const viewer = document.getElementById('viewer');
+const tabs = document.getElementById('tabs');
+const status = document.getElementById('status');
+let currentUrl = null;
+
+
+function loadModel(name){
+  status.textContent = 'Loading ' + name + '…';
+  viewer.src = MODELS[name];
+  viewer.autoRotate = true;
+  [...tabs.children].forEach(b => b.classList.toggle('active', b.textContent === name));
+}
+
+Object.keys(MODELS).forEach(name => {
+  const b = document.createElement('button');
+  b.textContent = name;
+  b.onclick = () => loadModel(name);
+  tabs.appendChild(b);
+});
+
+viewer.addEventListener('load', () => status.textContent = '3D model loaded successfully. Auto-rotate is ON.');
+viewer.addEventListener('error', () => status.textContent = 'Model could not be loaded. Please reopen the HTML in Chrome with an internet connection.');
+function setView(v){ viewer.cameraOrbit = v; }
+function toggleRotate(){ viewer.autoRotate = !viewer.autoRotate; status.textContent = 'Auto-rotate ' + (viewer.autoRotate ? 'ON' : 'OFF'); }
+function resetView(){ viewer.cameraOrbit='auto auto auto'; viewer.cameraTarget='auto'; }
+loadModel('Worker Safety Node');
+</script>
+</body>
+</html>
